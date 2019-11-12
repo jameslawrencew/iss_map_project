@@ -1,0 +1,47 @@
+<!-- James Westervelt
+11/11/2019 
+youtube learning-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Coding Train: Data/APIs 1</title>
+</head>
+<body>
+    <img src="" id="rainbow" width="480">
+
+    <!-- change fetch .then to async and await using function to replace:     fetch('rainbow.jpg').then(response => {
+        console.log(response);
+        return response.blob();
+    })
+    .then(blob => {
+        console.log(blob);
+    })-->
+    <script>     
+    console.log('about to fetch() a rainbow');
+
+    catchRainbow()
+    .then(response => {
+        console.log('VALID!');
+    })
+    .catch(error => {
+        console.log('ERROR!');
+        console.error(error);
+    });
+
+    async function catchRainbow() {
+        const response = await fetch('rainbow.jpg');
+        const blob = await response.blob();
+        document.getElementById('rainbow').src = URL.createObjectURL(blob);
+    }
+
+    </script>
+    
+</body>
+</html>
+
+<!-- Tutorial #1 from Coding Train,
+     https://www.youtube.com/watch?v=tc8DU14qX6I&list=PLRqwX-V7Uu6YxDKpFzf_2D84p0cyk4T7X&index=3 -->

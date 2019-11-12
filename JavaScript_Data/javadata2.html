@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Data/APIs 2; Fetch and Graph</title>
+    <!--chart.js CDN https://www.chartjs.org/docs/latest/ -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.2/dist/Chart.min.js"></script>
+
+</head>
+
+<body>
+    <h1>Fetching external data and graph using chart.js</h1>
+    <canvas id="chart" width="800" height="400"></canvas>
+    <p>This project uses javascripts fetch() function to connect to an external data source, <br />
+    in this case the National Aeronautics and Space Administration <br />
+    Goddard Institute for Space Studies and the GISS Surface Temperature Analysis data.<br />
+    The tempurature data is then used to plot points, and label the x and y axes using chartjs javascript library.</p>
+
+    <script>
+        chartIt();
+        async function chartIt() {
+            const data = await getData();
+            const ctx = document.getElementById('chart').getContext('2d');
+            const myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.xs,
+                    datasets: [{
+                        label: 'Combined Land-Surface Air and Sea-Surface Water Temperature in F°',
+                        data: data.ys,
+                        fill: false,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                // Include a dollar sign in the ticks
+                                callback: function (value, index, values) {
+                                    return value + '°';
+                                }
+                            }
+                        }]
+                    }
+                }
+            });
+        }//END async function chartIt()
+
+        //Dataset courtesy: https://data.giss.nasa.gov/gistemp/
+        //The global mean surface air temperature for that period was estimated to be 14°C (57°F)
+        //Data courtesy: https://earthobservatory.nasa.gov/world-of-change/DecadalTemp
+
+        async function getData() {
+            const xs = [];
+            const ys = [];
+
+            const response = await fetch('ZonAnn.Ts+dSST.csv'); //upload your docs to server!
+            const data = await response.text();
+
+            //Seperate or .split into rows .slice from index #1
+            const table = data.split('\n').slice(1);
+            table.forEach(row => {
+                const column = row.split(',');
+                const year = column[0];
+                xs.push(year);
+                const temp = column[1];
+                ys.push(parseFloat(temp) * 9 / 5 + 46); //parseFloat to convert string to int for addition
+                //console.log(year, temp);
+            });
+            return {
+                xs,
+                ys
+            };
+        } //END async function getData()
+    </script>
+</body>
+
+</html>
+<!--James Westervelt
+11/11/2019
+YouTube Learning: Coding Train, 
+https://www.youtube.com/watch?v=5-ptp9tRApM&list=PLRqwX-V7Uu6YxDKpFzf_2D84p0cyk4T7X&index=5-->
